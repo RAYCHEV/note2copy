@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Note2Copy</title>
+    <style>
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
+            font-family: 'Courier New', monospace;
+        }
+        a {
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        #notification {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #444;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .line {
+            display: flex;
+        }
+        .line-number {
+            color: #888;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <pre style="font-size: larger;">
+        My Config Title here
+    </pre>
+
+    <pre id="preElement">
+
+        my notes 2 copy here
+
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ducimus excepturi 
+
+        mollitia temporibus minima! Velit quisquam rerum alias consectetur
+         ipsum iure nisi iusto quam 
+
+         recusandae facilis, voluptas, fugit at ut. Dicta!
+
+    </pre>
+
+    <div id="notification"></div>
+
+    <script>
+        function copyToClipboard(event) {
+            event.preventDefault();
+            var text = event.target.innerText;
+            navigator.clipboard.writeText(text).then(function() {
+                console.log('Copying to clipboard was successful!');
+                showNotification(text);
+            }, function(err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+
+        function showNotification(text) {
+            var notification = document.getElementById('notification');
+            notification.innerText = 'Copied: ' + text;
+            notification.style.display = 'block';
+            setTimeout(function() {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        window.onload = function() {
+            var preElement = document.getElementById('preElement');
+            var lines = preElement.innerText.split('\n');
+            preElement.innerHTML = '';
+            var lineNum = 0;
+            for (var i = 0; i < lines.length; i++) {
+                var trimmedLine = lines[i].trim();
+                if (trimmedLine === '') {
+                    preElement.appendChild(document.createElement('br'));
+                } else {
+                    lineNum++
+                    var lineElement = document.createElement('div');
+                    lineElement.className = 'line';
+
+                    var lineNumberElement = document.createElement('span');
+                    lineNumberElement.className = 'line-number';
+                    lineNumberElement.innerText = lineNum + '.';
+
+                    var aElement = document.createElement('a');
+                    aElement.href = '';
+                    aElement.onclick = copyToClipboard;
+                    aElement.innerText = trimmedLine;
+
+                    lineElement.appendChild(lineNumberElement);
+                    lineElement.appendChild(aElement);
+                    preElement.appendChild(lineElement);
+                    preElement.appendChild(document.createElement('br'));
+                }
+            }
+        }
+    </script>
+</body>
+</html>
