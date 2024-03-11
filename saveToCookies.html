@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Text Editor</title>
+    <style>
+        #editor {
+            width: 80%;
+            margin: auto;
+            text-align: center;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 5px 15px;
+        }
+    </style>
+</head>
+<body>
+    <div id="editor">
+        <textarea id="textArea"></textarea>
+        <button id="saveBtn">Save</button>
+        <button id="clearBtn">Clear</button>
+    </div>
+
+    <script>
+        document.getElementById('saveBtn').addEventListener('click', function() {
+            const text = document.getElementById('textArea').value;
+            localStorage.setItem('savedText', text);
+        });
+
+        document.getElementById('clearBtn').addEventListener('click', function() {
+            document.getElementById('textArea').value = '';
+            localStorage.removeItem('savedText');
+        });
+
+        // Load saved text from local storage if available
+        window.onload = function() {
+            const savedText = localStorage.getItem('savedText');
+            if (savedText) {
+                document.getElementById('textArea').value = savedText;
+            }
+        };
+    </script>
+</body>
+</html>
