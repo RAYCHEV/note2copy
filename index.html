@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Note2Copy</title>
+    <style>
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
+            font-family: 'Courier New', monospace;
+        }
+        a {
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        #notification {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #444;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .line {
+            display: flex;
+        }
+        .line-number {
+            color: #888;
+            margin-right: 10px;
+        }
+        #editArea {
+            width: 100%;
+            height: 200px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <pre style="font-size: larger;">
+        My Config Title here
+    </pre>
+
+    <textarea id="editArea"></textarea>
+    <button onclick="saveNotes()">Save Notes</button>
+
+    <pre id="preElement"></pre>
+
+    <div id="notification"></div>
+
+    <script>
+        function copyToClipboard(event) {
+            event.preventDefault();
+            var text = event.target.innerText;
+            navigator.clipboard.writeText(text).then(function() {
+                console.log('Copying to clipboard was successful!');
+                showNotification('Copied: ' + text);
+            }, function(err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+
+        function showNotification(text) {
+            var notification = document.getElementById('notification');
+            notification.innerText = text;
+            notification.style.display = 'block';
+            setTimeout(function() {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        function loadNotes() {
+            var storedNotes = localStorage.getItem('myNotes');
+            if (storedNotes) {
+                document.getElementById('editArea').value = storedNotes;
+                displayLines(storedNotes);
+            }
+        }
+
+        function saveNotes() {
+            var notes = document.getElementById('editArea').value;
+            localStorage.setItem('myNotes', notes);
+            showNotification('Notes saved!');
+            displayLines(notes);
+        }
+
+        function displayLines(notes) {
+            var lines = notes.split('\n');
+            var preElement = document.getElementById('preElement');
+            preElement.innerHTML = '';
+            var lineNum = 0;
+            for (var i = 0; i < lines.length; i++) {
+                var trimmedLine = lines[i].trim();
+                if (trimmedLine === '') {
+                    preElement.appendChild(document.createElement('br'));
+                } else {
+                    lineNum++;
+                    var lineElement = document.createElement('div');
+                    lineElement.className = 'line';
+
+                    var lineNumberElement = document.createElement('span');
+                    lineNumberElement.className = 'line-number';
+                    lineNumberElement.innerText = lineNum + '.';
+
+                    var aElement = document.createElement('a');
+                    aElement.href = '';
+                    aElement.onclick = copyToClipboard;
+                    aElement.innerText = trimmedLine;
+
+                    lineElement.appendChild(lineNumberElement);
+                    lineElement.appendChild(aElement);
+                    preElement.appendChild(lineElement);
+                    preElement.appendChild(document.createElement('br'));
+                }
+            }
+        }
+
+        window.onload = loadNotes;
+    </script>
+</body>
+</html>
